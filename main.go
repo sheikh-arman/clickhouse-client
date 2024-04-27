@@ -7,11 +7,12 @@ import (
 	klog "log"
 
 	"github.com/ClickHouse/clickhouse-go/v2"
-	_ "github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	"github.com/sheikh-arman/clickhouse-client/sql"
 )
 
 func main() {
+
 	klog.Println("\n\nStarted  ->>>>>>>>>> 1")
 	conn, err := connect()
 	if err != nil {
@@ -37,7 +38,15 @@ func main() {
 		log.Printf("name: %s, uuid: %s",
 			name, uuid)
 	}
+	shw, err := conn.Query(ctx, "SHOW DATABASES")
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	for shw.Next() {
+		log.Println(shw.Columns())
+	}
+	sql.sqlConnect()
 }
 
 func connect() (driver.Conn, error) {
