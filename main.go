@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	klog "log"
+
 	"github.com/ClickHouse/clickhouse-go/v2"
 	_ "github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
-	"log"
-	klog "log"
 )
 
 func main() {
@@ -43,11 +44,11 @@ func connect() (driver.Conn, error) {
 	var (
 		ctx       = context.Background()
 		conn, err = clickhouse.Open(&clickhouse.Options{
-			Addr: []string{"127.0.0.1:9000"},
+			Addr: []string{"click-sample.click.svc.cluster.local:9000"},
 			Auth: clickhouse.Auth{
 				Database: "default",
 				Username: "default",
-				Password: "arman",
+				Password: "lgE_kkgMcyUDTQnz",
 			},
 			ClientInfo: clickhouse.ClientInfo{
 				Products: []struct {
