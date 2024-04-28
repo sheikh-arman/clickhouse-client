@@ -2,19 +2,29 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
+	"github.com/ClickHouse/clickhouse-go/v2"
+	_ "github.com/ClickHouse/clickhouse-go/v2"
+	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	sqlconn "github.com/sheikh-arman/clickhouse-client/sql"
 	"log"
 	klog "log"
 	"time"
-
-	"github.com/ClickHouse/clickhouse-go/v2"
-	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
+	// _ "github.com/ClickHouse/clickhouse-go/v2/lib/driver"
 )
 
 func main() {
 
 	klog.Println("\n\nStarted  ->>>>>>>>>> 1")
+	clickhouseNativeConnect()
+	sqlconn.SqlConnect()
+	kubeDBConnect()
+
+	time.Sleep(time.Hour * 24)
+}
+
+func clickhouseNativeConnect() {
+	klog.Println("\n\nStarted clickhouseNative ->>>>>>>>>> ")
 	conn, err := connect()
 	if err != nil {
 		panic((err))
@@ -53,7 +63,7 @@ func main() {
 		}
 		fmt.Println(databaseName)
 	}
-	sqlConnect()
+	klog.Println("\n\nclickhouseNative Passed ->>>>>>>>>> ")
 }
 
 func connect() (driver.Conn, error) {
@@ -97,46 +107,7 @@ func connect() (driver.Conn, error) {
 	return conn, nil
 }
 
-func sqlConnect() {
-	log.Println("SQL Connection -> ")
-	conn, err := sql.Open("clickhouse", fmt.Sprintf("clickhouse://%s:%d?username=%s&password=%s", "click-sample.click.svc.cluster.local", 9000, "default", "lgE_kkgMcyUDTQnz"))
-	if err != nil {
-		log.Println("sql Connection error ->>")
-		log.Fatal(err)
-	}
-	err = conn.Ping()
-	if err != nil {
-		log.Println("sql Ping error ")
-		log.Fatal(err)
-	}
-
-	_, err = conn.Exec("SELECT 1")
-	if err != nil {
-		log.Println("sql select eroro")
-		log.Fatal(err)
-	}
-	log.Println("Connection checked Successful")
-	// Execute a test query to fetch databases
-	rows, err := conn.Query("SHOW DATABASES")
-	if err != nil {
-		log.Println("Error fetching databases:")
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
-	// Iterate over the rows and print each database name
-	var databaseName string
-	for rows.Next() {
-		if err := rows.Scan(&databaseName); err != nil {
-			log.Println("Error scanning database row:")
-			log.Fatal(err)
-		}
-		fmt.Println(databaseName)
-	}
-	if err := rows.Err(); err != nil {
-		log.Println("Error iterating over database rows:")
-		log.Fatal(err)
-	}
-	log.Println("Database list fetched successfully")
-	time.Sleep(time.Hour * 24)
+func kubeDBConnect() {
+	log.Println("KubeDB Connection started -> ")
+	log.Println("SqlConnect passd")
 }
